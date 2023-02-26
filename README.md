@@ -4,10 +4,14 @@
 * [Setup](#Setup)
 * [Repository & Local](#Repository-amp-Local)
   * [tracking file](#tracking-file)
+  * [file name](#file-name)
   * [commit](#commit)
-  * [push to server](#push-to-server)
+  * [發佈到雲端版控](#發佈到雲端版控)
 * [Stash](#Stash)
-
+* [Branch](#Branch)
+  * [basic](#basic)
+* [Git config](#Git-config)
+  * [專案設定](#專案設定)
 ---
 
 ## Setup
@@ -73,6 +77,45 @@ git add .
 ```
 ![](https://i.imgur.com/myQCmRy.png)
 
+### file name
+
+檔案中`test1.txt`假設改`Test1.txt `
+
+因為檔名如果只是大小寫不同，這就會讓Git 無法分辨
+
+![](https://i.imgur.com/JlEOYQV.png)
+
+![](https://i.imgur.com/7nnATQb.png)
+
+![](https://i.imgur.com/nShXJgJ.png)
+
+**解決方式一:**
+
+```
+git mv test1.txt TEST1.txt
+```
+
+或是乾脆一開始不直接更改檔名，直接使用`git mv`也可以同時修改檔案名和Git
+```
+git mv oldFileName newFileName
+```
+
+![](https://i.imgur.com/Kfi5I1I.png)
+
+
+
+**解決方式二:**
+
+修改全域變數
+```
+git config --global core.ignorecase false
+```
+只關閉單一專案設定
+```
+git config --local core.ignorecase false
+```
+
+
 ### commit
 
 接著我們需要推送commit到暫存區，輸入`git commit -m "text"`
@@ -110,7 +153,7 @@ git log -1 --graph
 ![](https://i.imgur.com/CZgZCfX.png)
 
 
-### push to server
+### 發佈到雲端版控
 
 這邊我們必須先說雲端的版本存放不是只有Github，像是AWS、Gitlab等等都可以
 
@@ -220,5 +263,113 @@ commit "merge stash"
 
 我們再回去看index.html就是我們合併成功的版本了
 ![](https://i.imgur.com/aEd1w6c.png)
+
+---
+
+## Branch
+
+當多人協作時，分支的建立可以分離避免主要版本受到過多影響，而每個分支可以在細分為功能分支，在該分支確定合併成功後，再跟主分支`master`合併。
+
+### basic
+查看當前的分支有多少，分支旁邊有`*`代表當前所在分支
+
+```
+git branch
+```
+![](https://i.imgur.com/GQ5bOQg.png)
+
+我們建立一個develop的分支
+```
+git branch develop
+```
+![](https://i.imgur.com/aKdiNxM.png)
+
+切換至develop分支
+```
+git checkout
+```
+
+現在我們正確在develop分支
+![](https://i.imgur.com/174kP98.png)
+
+![](https://i.imgur.com/UZkhKF5.png)
+
+假設需要一下新增一個功能，我們新增一個index.js模擬
+![](https://i.imgur.com/IiXcYMu.png)
+
+可以看到在develop分支中的檔案有index.html、test1.txt、index.js
+
+![](https://i.imgur.com/AEFpHAI.png)
+
+切回master分支中，確實與develop不同版本
+![](https://i.imgur.com/j0FcJFZ.png)
+
+那現在假設測試版本都可以正常運作準備上線，我們需要把develop分支的版本合併(merge)至master分支中
+
+
+:exclamation:  需切回到master分支才能合併分支
+```
+git merge develop
+```
+
+![](https://i.imgur.com/wEeGLEM.png)
+
+![](https://i.imgur.com/NeP8WCu.png)
+
+這樣master和develop都指向當前最新的版本"add index.js"
+![](https://i.imgur.com/svfQQM8.png)
+
+
+## Git config
+
+我們可以輸入以下指令查看git 設定檔
+
+```
+vim ~/.git
+```
+然後按下`tab`就會顯示相關檔案
+![](https://i.imgur.com/zGZAlDe.png)
+
+而最重要的在`.gitconfig`
+
+![](https://i.imgur.com/loNloq0.png)
+
+也可以使用
+```
+git config --list
+```
+![](https://i.imgur.com/G1zYoMQ.png)
+
+### 專案設定
+
+假設我的Git 全域設定是叫做`Dennis xxx`，但是我在這個專案中想要使用別的名稱
+
+
+我們就可以使用：
+```
+cd <project>
+git config --local user.name "username"
+```
+![](https://i.imgur.com/C5Nx8Gs.png)
+
+
+查看專案中的`.git`
+```
+cd <project>
+vim .git/config
+```
+
+![](https://i.imgur.com/Pg1mcde.png)
+
+
+假設今天想刪掉區域變數了，想改回使用全域的名字"Dennis XXX"
+```
+git config --local --unset user.name
+```
+![](https://i.imgur.com/dsCIbSF.png)
+
+![](https://i.imgur.com/nVevpsY.png)
+
+刪除成功～～～
 
 ---
